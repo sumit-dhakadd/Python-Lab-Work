@@ -1,29 +1,30 @@
 import pandas as pd
 
-filename = input("Enter CSV file name: ")
+# Take file name from user
+file = input("Enter CSV/TSV file name: ")
 
-data = pd.read_csv(filename)
+# Read the file
+df = pd.read_csv(file)
 
+# Display basic information
 print("\nDataset:")
-print(data)
+print(df)
 
-print("\nRows and Columns:")
-print(data.shape)
-
+print("\nRows and Columns:", df.shape)
 print("\nData Types:")
-print(data.dtypes)
+print(df.dtypes)
 
-print("\nSummary:")
-print(data.describe())
+# Filter rows using a condition
+column = input("\nEnter column name for filtering: ")
+value = float(input("Enter minimum value: "))
 
-column = input("\nEnter column name to filter: ")
-value = input("Enter value: ")
+filtered = df[df[column] >= value]
 
-filtered_data = data[data[column].astype(str) == value]
-
+# Display filtered data
 print("\nFiltered Data:")
-print(filtered_data)
+print(filtered)
 
-filtered_data.to_csv("filtered_data.csv", index=False)
+# Export filtered data
+filtered.to_csv("cleaned_data.csv", index=False)
 
-print("\nFiltered data saved successfully!")
+print("\nFiltered data saved as cleaned_data.csv")
