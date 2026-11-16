@@ -2,84 +2,70 @@
 import turtle
 
 class PatternGenerator:
-
     def __init__(self):
-        self.screen = turtle.Screen()
-        self.screen.title("Interactive Turtle Fractal Renderer")
-        self.screen.bgcolor("black")
-        self.screen.setup(800, 700)
-
+        self.s = turtle.Screen()
+        self.s.title("Turtle Pattern Generator")
+        self.s.bgcolor("black")
         self.t = turtle.Turtle()
         self.t.speed(0)
-        self.palette = ["red", "yellow", "cyan", "green", "magenta"]
+        self.colors = ["red", "yellow", "cyan", "green", "magenta"]
 
-    def draw_spiral(self):
-        self.t.clear()
-        for n in range(100):
-            self.t.pencolor(self.palette[n % 5])
-            self.t.forward(n * 3)
+    def spiral(self):
+        for i in range(100):
+            self.t.color(self.colors[i % 5])
+            self.t.forward(i * 3)
             self.t.right(91)
 
-    def draw_polygon(self):
-        self.t.clear()
-        sides = int(self.screen.numinput("Polygon", "Enter sides:", 6))
-        for n in range(sides):
-            self.t.pencolor(self.palette[n % 5])
+    def polygon(self):
+        n = int(self.s.numinput("Polygon", "Enter sides:", 6))
+        for i in range(n):
+            self.t.color(self.colors[i % 5])
             self.t.forward(100)
-            self.t.right(360 / sides)
+            self.t.right(360 / n)
 
-    def draw_fractal(self, size, depth):
-        if depth <= 0:
+    def fractal(self, size, depth):
+        if depth == 0:
             self.t.forward(size)
         else:
-            size /= 3
-            self.draw_fractal(size, depth - 1)
-            self.t.left(60)
-            self.draw_fractal(size, depth - 1)
-            self.t.right(120)
-            self.draw_fractal(size, depth - 1)
-            self.t.left(60)
-            self.draw_fractal(size, depth - 1)
+            for angle in [0, 60, -120, 60]:
+                self.fractal(size / 3, depth - 1)
+                self.t.left(angle)
 
-    def draw_koch(self):
-        self.t.clear()
+    def koch(self):
         self.t.penup()
         self.t.goto(-200, 100)
         self.t.pendown()
-        self.t.pencolor("cyan")
-        self.draw_fractal(400, 4)
+        self.t.color("cyan")
+        self.fractal(400, 4)
 
-    def draw_flower(self):
-        self.t.clear()
-        for n in range(36):
-            self.t.pencolor(self.palette[n % 5])
+    def flower(self):
+        for i in range(36):
+            self.t.color(self.colors[i % 5])
             self.t.circle(100)
             self.t.left(10)
 
     def run(self):
         options = {
-            "1": self.draw_spiral,
-            "2": self.draw_polygon,
-            "3": self.draw_koch,
-            "4": self.draw_flower
+            "1": self.spiral,
+            "2": self.polygon,
+            "3": self.koch,
+            "4": self.flower
         }
 
-        def select_pattern():
-            choice = self.screen.textinput(
-                "Turtle Generator",
-                "1. Spiral\n2. Polygon\n3. Koch Fractal\n4. Flower\nEnter choice:"
+        def menu():
+            self.t.clear()
+            ch = self.s.textinput(
+                "Pattern Generator",
+                "1.Spiral\n2.Polygon\n3.Koch Fractal\n4.Flower"
             )
-
-            if choice in options:
-                options[choice]()
+            if ch in options:
+                options[ch]()
             else:
                 print("Invalid choice!")
+            self.s.ontimer(menu, 100)
 
-            self.screen.ontimer(select_pattern, 100)
-
-        select_pattern()
-        self.screen.mainloop()
+        menu()
+        self.s.mainloop()
 
 
-app = PatternGenerator()
-app.run()
+PatternGenerator().run()
